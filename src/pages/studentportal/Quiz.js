@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import NavBar from "../../components/NavBar";
 import Error from "../../components/ui/Error";
@@ -6,13 +7,20 @@ import {
   useAddQuizMarkMutation,
   useGetQuizQuery,
 } from "../../features/quize/quizApi";
+import useIsQuiz from "../../hooks/useIsQuizCheck";
 
 const Quiz = () => {
   const { id } = useParams();
+  const { name: student_name, id: student_id } = useSelector(
+    (state) => state.auth.user
+  );
   const { data: quizzes, isError, isLoading, error } = useGetQuizQuery(id);
+  const [addQuizMark, { data: quizData, isSuccess }] = useAddQuizMarkMutation();
+
   const [answers, setAnswers] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
-  const [addQuizMark, { data: quizData, isSuccess }] = useAddQuizMarkMutation();
+
+  const isQuiz = useIsQuiz(id);
 
   const onsubmitHandler = (e) => {
     e.preventDefault();
@@ -20,8 +28,6 @@ const Quiz = () => {
     const { video_id, video_title } = quizzes[0] || {};
     const totalCorrect = answers.filter((correct) => correct.quizAns);
     const totalWrong = answers.filter((wrong) => !wrong.quizAns);
-    const localAuth = localStorage.getItem("auth");
-    const { name: student_name, id: student_id } = JSON.parse(localAuth)?.user;
 
     const quizMark = {
       student_id,
@@ -57,6 +63,12 @@ const Quiz = () => {
       setAnswers(replace);
     }
   };
+
+  useEffect(() => {
+    if (isQuiz?.student_id) {
+      setIsChecked(true);
+    }
+  }, [isQuiz?.student_id]);
 
   // decide what to render
   let content = null;
@@ -119,9 +131,9 @@ const Quiz = () => {
             <p className="text-sm text-slate-200">
               Each question contains 5 Mark
             </p>
-            {quizData ? (
+            {isQuiz?.student_id ? (
               <p className="text-2xl text-green-700 mt-2">
-                You get {quizData.mark} marks out of {quizData.totalMark} 😊
+                You get {isQuiz.mark} marks out of {isQuiz.totalMark} 😊
               </p>
             ) : (
               ""

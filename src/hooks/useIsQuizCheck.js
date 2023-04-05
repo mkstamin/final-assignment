@@ -1,19 +1,22 @@
+import { useSelector } from "react-redux";
 import { useGetQuizMarkByVideoQuery } from "../features/quize/quizApi";
 
-const localAuth = localStorage.getItem("auth");
-const { id: student_id } = JSON.parse(localAuth)?.user;
+const useIsQuiz = (videoId) => {
+  const { id: student_id } = useSelector((state) => state.auth.user);
 
-const useIsQuizCheck = (videoId) => {
   const { data, isLoading, isError } = useGetQuizMarkByVideoQuery({
     studentId: student_id,
     videoId: videoId,
   });
 
   if (!isLoading && !isError) {
-    return data;
+    if (data[0]?.student_id === student_id) {
+      return data[0];
+    }
+    return {};
   }
 
-  return [];
+  return {};
 };
 
-export default useIsQuizCheck;
+export default useIsQuiz;
