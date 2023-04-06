@@ -3,9 +3,12 @@ import useAuthCheck from "./hooks/useAuthCheck";
 import NotFound from "./pages/NotFound";
 import AdminLogin from "./pages/dashboard/AdminLogin";
 import Assignment from "./pages/dashboard/Assignment";
+import AssignmentAdd from "./pages/dashboard/AssignmentAdd";
+import AssignmentEdit from "./pages/dashboard/AssignmentEdit";
 import AssignmentMark from "./pages/dashboard/AssignmentMark";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Quizzes from "./pages/dashboard/Quizzes";
+import VideoAdd from "./pages/dashboard/VideoAdd";
 import Videos from "./pages/dashboard/Videos";
 import Leaderboard from "./pages/studentportal/Leaderboard";
 import Player from "./pages/studentportal/Player";
@@ -87,6 +90,7 @@ function App() {
               </PadminR>
             }
           />
+
           <Route
             path="assignment"
             element={
@@ -95,6 +99,23 @@ function App() {
               </PadminR>
             }
           />
+          <Route
+            path="add-assignment"
+            element={
+              <PadminR>
+                <AssignmentAdd />
+              </PadminR>
+            }
+          />
+          <Route
+            path="edit-assignment/:id"
+            element={
+              <PadminR>
+                <AssignmentEdit />
+              </PadminR>
+            }
+          />
+
           <Route
             path="assignment-mark"
             element={
@@ -116,6 +137,14 @@ function App() {
             element={
               <PadminR>
                 <Videos />
+              </PadminR>
+            }
+          />
+          <Route
+            path="add-video"
+            element={
+              <PadminR>
+                <VideoAdd />
               </PadminR>
             }
           />

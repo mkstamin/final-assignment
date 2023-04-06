@@ -19,7 +19,35 @@ export const userApi = apiSlice.injectEndpoints({
         }
       },
     }),
+    getVideo: builder.query({
+      query: (id) => ({
+        url: `/videos/${id}`,
+        method: "GET",
+      }),
+    }),
+    addVideo: builder.mutation({
+      query: (data) => ({
+        url: "/videos",
+        method: "POST",
+        body: data,
+      }),
+
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data: addData } = await queryFulfilled;
+
+          dispatch(
+            userApi.util.updateQueryData("getVideos", undefined, (draft) => {
+              draft.push(addData);
+            })
+          );
+        } catch (err) {
+          console.log(err.message);
+        }
+      },
+    }),
   }),
 });
 
-export const { useGetVideosQuery } = userApi;
+export const { useGetVideosQuery, useAddVideoMutation, useGetVideoQuery } =
+  userApi;
