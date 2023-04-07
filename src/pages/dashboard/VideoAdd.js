@@ -4,7 +4,7 @@ import AdminNavBar from "../../components/AdminNavBar";
 import { useAddVideoMutation } from "../../features/user/userApi";
 
 const VideoAdd = () => {
-  const [addVideo, { data: addVideoData }] = useAddVideoMutation();
+  const [addVideo] = useAddVideoMutation();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -18,19 +18,12 @@ const VideoAdd = () => {
 
     const date = new Date();
     const formattedDate = date.toISOString();
-    // "id": 1,
-    // "title": "Debounce Function in JavaScript - JavaScript Job Interview question",
-    // "description": "In this video, I have explained about the debounce function in JavaScript. This is a common question interviewers ask at Job Interviews. If you watch this video carefully, you will understand what is debounce and how to handle it with custom debounce function.",
-    // "url": "https://www.youtube.com/embed/dD9O8DnIBj4",
-    // "views": "51.2K",
-    // "duration": "5:30",
-    // "createdAt": "2023-01-15T15:17:01.727Z"
 
     const data = {
       title,
       description,
       url,
-      views: views / 1000 + "k",
+      views: views / 1000 + "K",
       duration,
       createdAt: formattedDate,
     };

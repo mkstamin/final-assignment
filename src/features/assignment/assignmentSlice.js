@@ -1,12 +1,22 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {};
+const initialState = {
+  assignments: [],
+  assignment: {},
+};
 
 const assignmentSlice = createSlice({
   name: "assignment",
   initialState,
-  reducers: {},
+  reducers: {
+    allAssignment: (state, action) => {
+      state.assignments = action.payload;
+    },
+    assignmentByVideoId: (state, action) => {
+      state.assignment = action.payload;
+    },
+  },
 });
 
-export const {} = assignmentSlice.actions;
+export const { allAssignment, assignmentByVideoId } = assignmentSlice.actions;
 export default assignmentSlice.reducer;

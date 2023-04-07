@@ -1,17 +1,25 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminNavBar from "../../components/AdminNavBar";
-import { useGetAssignmentsQuery } from "../../features/assignment/assignmentApi";
+import Error from "../../components/ui/Error";
+import {
+  useAddAssignmentMutation,
+  useGetAssignmentsQuery,
+} from "../../features/assignment/assignmentApi";
 import { useGetVideosQuery } from "../../features/user/userApi";
 
 const AssignmentAdd = () => {
   const { data: videos } = useGetVideosQuery();
   const { data: assignments } = useGetAssignmentsQuery();
+  const [addAssignment] = useAddAssignmentMutation();
 
   const [title, setTitle] = useState("");
   const [selectVideo, setSelectVideo] = useState("");
   const [mark, setMark] = useState(0);
   const [videoId, setVideoId] = useState();
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const changeHandler = (e) => {
     const index = e.target.selectedIndex;
@@ -27,7 +35,7 @@ const AssignmentAdd = () => {
 
     const findAssignment = assignments?.find((a) => a.video_id === videoId);
 
-    if (findAssignment.id) {
+    if (findAssignment?.id) {
       setError("There was already a assignment for this video!");
     } else {
       const data = {
@@ -36,9 +44,12 @@ const AssignmentAdd = () => {
         video_title: selectVideo,
         totalMark: mark,
       };
-    }
 
-    // navigate("/");
+      console.log(data);
+
+      addAssignment(data);
+      navigate("/admin/assignment");
+    }
   };
 
   return (
@@ -50,10 +61,6 @@ const AssignmentAdd = () => {
           <h1 className="text-2xl font-bold">
             <span className="text-[cyan]">Add New</span> Assignment
           </h1>
-        </div>
-
-        <div className="text-red-800 text-lg">
-          <span>{error}</span>
         </div>
         <form className="space-y-8 pb-5 pt-4" onSubmit={onSubmitHandler}>
           <div className="">
@@ -80,7 +87,7 @@ const AssignmentAdd = () => {
                 onChange={changeHandler}
               >
                 <option value="" hidden>
-                  Select Job
+                  Select Video
                 </option>
                 {/* {content} */}
                 {videos?.map((video) => (
@@ -103,6 +110,9 @@ const AssignmentAdd = () => {
               />
             </div>
           </div>
+
+          {error && <Error message={error} />}
+
           <div className="">
             <button
               className="px-5 font-bold py-3 border border-[cyan] text-[cyan] rounded-full text-sm hover:bg-[cyan] hover:text-gray-900"

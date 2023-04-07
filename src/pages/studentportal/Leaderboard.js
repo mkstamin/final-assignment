@@ -1,7 +1,77 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import NavBar from "../../components/NavBar";
+import Error from "../../components/ui/Error";
+import { useGetAssignmentMarksQuery } from "../../features/assignment/assignmentApi";
+import {
+  addAllAssignmentMarks,
+  addAllQuizMarks,
+} from "../../features/leaderboard/leaderboardSlice";
+import { useGetQuizzesMarkQuery } from "../../features/quize/quizApi";
 
 const Leaderboard = () => {
+  const mergedAssignmentMarks = useSelector(
+    (state) => state.leaderboard.assignmentMarks
+  );
+  const mergedQuizMarksMarks = useSelector(
+    (state) => state.leaderboard.quizMarks
+  );
+  const { data: assignmentMarks } = useGetAssignmentMarksQuery();
+  const { data: quizzesMark } = useGetQuizzesMarkQuery();
+  const dispatch = useDispatch();
+
+  const [error, setError] = useState("");
+
+  const mergedMarks = mergedQuizMarksMarks.map((quiz) => {
+    const matchingAssignment = mergedAssignmentMarks.find(
+      (assignment) => assignment.student_id === quiz.student_id
+    );
+    return {
+      quiz: { ...quiz },
+      assignment: { ...matchingAssignment },
+    };
+  });
+
+  console.log(mergedMarks);
+
+  useEffect(() => {
+    dispatch(addAllAssignmentMarks(assignmentMarks));
+  }, [dispatch, assignmentMarks]);
+
+  useEffect(() => {
+    dispatch(addAllQuizMarks(quizzesMark));
+  }, [dispatch, quizzesMark]);
+
+  let content = null;
+
+  if (mergedMarks.length < 1) {
+    content = (
+      <tr>
+        <td>Loading....</td>
+      </tr>
+    );
+  }
+
+  if (mergedMarks === undefined) {
+    content = <Error message={"There was an error"} />;
+  }
+
+  if (mergedMarks.length > 0 && mergedMarks !== undefined) {
+    content = mergedMarks?.map((itm, i) => {
+      const { assignment, quiz } = itm;
+      return (
+        <tr key={i} className="border-b border-slate-600/50">
+          <td className="table-td text-center">4</td>
+          <td className="table-td text-center">{quiz.student_name}</td>
+          <td className="table-td text-center">{quiz.mark}</td>
+          <td className="table-td text-center">{assignment.mark}</td>
+          <td className="table-td text-center">
+            {quiz.totalMark + assignment.mark}
+          </td>
+        </tr>
+      );
+    });
+  }
   return (
     <>
       <NavBar />
@@ -46,55 +116,7 @@ const Leaderboard = () => {
                 </tr>
               </thead>
 
-              <tbody>
-                <tr className="border-b border-slate-600/50">
-                  <td className="table-td text-center">4</td>
-                  <td className="table-td text-center">Saad Hasan</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">100</td>
-                </tr>
-
-                <tr className="border-b border-slate-600/50">
-                  <td className="table-td text-center">4</td>
-                  <td className="table-td text-center">Saad Hasan</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">100</td>
-                </tr>
-
-                <tr className="border-b border-slate-600/50">
-                  <td className="table-td text-center">4</td>
-                  <td className="table-td text-center">Saad Hasan</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">100</td>
-                </tr>
-
-                <tr className="border-b border-slate-600/50">
-                  <td className="table-td text-center">4</td>
-                  <td className="table-td text-center">Saad Hasan</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">100</td>
-                </tr>
-
-                <tr className="border-b border-slate-600/50">
-                  <td className="table-td text-center">4</td>
-                  <td className="table-td text-center">Saad Hasan</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">100</td>
-                </tr>
-
-                <tr className="border-slate-600/50">
-                  <td className="table-td text-center">4</td>
-                  <td className="table-td text-center">Saad Hasan</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">50</td>
-                  <td className="table-td text-center">100</td>
-                </tr>
-              </tbody>
+              <tbody>{content}</tbody>
             </table>
           </div>
         </div>

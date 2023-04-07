@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import learningportal from "../../assets/image/learningportal.svg";
+import Error from "../../components/ui/Error";
 import { useRegisterMutation } from "../../features/auth/authApi";
 
 const StudentReg = () => {
@@ -115,6 +116,8 @@ const StudentReg = () => {
                 </Link>
               </div>
             </div>
+
+            {error && <Error message={error} />}
 
             <div>
               <button

@@ -7,8 +7,11 @@ import AssignmentAdd from "./pages/dashboard/AssignmentAdd";
 import AssignmentEdit from "./pages/dashboard/AssignmentEdit";
 import AssignmentMark from "./pages/dashboard/AssignmentMark";
 import Dashboard from "./pages/dashboard/Dashboard";
+import QuizAdd from "./pages/dashboard/QuizAdd";
+import QuizEdit from "./pages/dashboard/QuizEdit";
 import Quizzes from "./pages/dashboard/Quizzes";
 import VideoAdd from "./pages/dashboard/VideoAdd";
+import VideoEdit from "./pages/dashboard/VideoEdit";
 import Videos from "./pages/dashboard/Videos";
 import Leaderboard from "./pages/studentportal/Leaderboard";
 import Player from "./pages/studentportal/Player";
@@ -132,6 +135,25 @@ function App() {
               </PadminR>
             }
           />
+
+          <Route
+            path="add-quiz"
+            element={
+              <PadminR>
+                <QuizAdd />
+              </PadminR>
+            }
+          />
+
+          <Route
+            path="edit-quiz/:id"
+            element={
+              <PadminR>
+                <QuizEdit />
+              </PadminR>
+            }
+          />
+
           <Route
             path="videos"
             element={
@@ -145,6 +167,15 @@ function App() {
             element={
               <PadminR>
                 <VideoAdd />
+              </PadminR>
+            }
+          />
+
+          <Route
+            path="edit-video/:id"
+            element={
+              <PadminR>
+                <VideoEdit />
               </PadminR>
             }
           />

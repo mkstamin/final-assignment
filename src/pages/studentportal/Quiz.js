@@ -5,7 +5,7 @@ import NavBar from "../../components/NavBar";
 import Error from "../../components/ui/Error";
 import {
   useAddQuizMarkMutation,
-  useGetQuizQuery,
+  useGetQuizzesByVideoIdQuery,
 } from "../../features/quize/quizApi";
 import useIsQuiz from "../../hooks/useIsQuizCheck";
 
@@ -14,7 +14,13 @@ const Quiz = () => {
   const { name: student_name, id: student_id } = useSelector(
     (state) => state.auth.user
   );
-  const { data: quizzes, isError, isLoading, error } = useGetQuizQuery(id);
+  const {
+    data: quizzes,
+    isError,
+    isLoading,
+    error,
+  } = useGetQuizzesByVideoIdQuery(id);
+
   const [addQuizMark, { data: quizData, isSuccess }] = useAddQuizMarkMutation();
 
   const [answers, setAnswers] = useState([]);
@@ -132,28 +138,37 @@ const Quiz = () => {
               Each question contains 5 Mark
             </p>
             {isQuiz?.student_id ? (
-              <p className="text-2xl text-green-700 mt-2">
-                You get {isQuiz.mark} marks out of {isQuiz.totalMark} 😊
-              </p>
+              <div className="mt-2">
+                <h4 className="text-2xl text-pink-600">
+                  You already submit you quiz.
+                </h4>
+                <p className="text-lg text-green-500">
+                  You get {isQuiz.mark} marks out of {isQuiz.totalMark} 😊
+                </p>
+              </div>
             ) : (
               ""
             )}
           </div>
-          <form onSubmit={onsubmitHandler}>
-            {/* <form> */}
-            <div className="space-y-8 ">{content}</div>
+          {quizzes?.length > 0 ? (
+            <form onSubmit={onsubmitHandler}>
+              {/* <form> */}
+              <div className="space-y-8 ">{content}</div>
 
-            <button
-              disabled={isChecked}
-              className={`px-4 py-2 rounded-full block ml-auto mt-8  ${
-                isChecked
-                  ? "cursor-not-allowed bg-[cyan] text-gray-900 bg-opacity-40"
-                  : "bg-[cyan] text-gray-900 hover:opacity-90 active:opacity-100 active:scale-95"
-              }`}
-            >
-              Submit
-            </button>
-          </form>
+              <button
+                disabled={isChecked}
+                className={`px-4 py-2 rounded-full block ml-auto mt-8  ${
+                  isChecked
+                    ? "cursor-not-allowed bg-[cyan] text-gray-900 bg-opacity-40"
+                    : "bg-[cyan] text-gray-900 hover:opacity-90 active:opacity-100 active:scale-95"
+                }`}
+              >
+                Submit
+              </button>
+            </form>
+          ) : (
+            <Error message="There is no quiz for this video!" />
+          )}
         </div>
       </section>
     </>

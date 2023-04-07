@@ -1,20 +1,42 @@
 import { apiSlice } from "../api/apiSlice";
+import { assignmentByVideoId } from "./assignmentSlice";
 
 export const assignmentApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAssignments: builder.query({
       query: () => "/assignments",
     }),
+
     getAssignment: builder.query({
       query: (id) => `/assignments/${id}`,
     }),
+
     addAssignment: builder.mutation({
       query: (data) => ({
         url: "/assignments",
         method: "POST",
         body: data,
       }),
+
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data: addData } = await queryFulfilled;
+
+          dispatch(
+            assignmentApi.util.updateQueryData(
+              "getAssignments",
+              undefined,
+              (draft) => {
+                draft.push(addData);
+              }
+            )
+          );
+        } catch (err) {
+          console.log(err.message);
+        }
+      },
     }),
+
     updateAssignment: builder.mutation({
       query: ({ id, patch }) => ({
         url: `/assignments/${id}`,
@@ -77,12 +99,32 @@ export const assignmentApi = apiSlice.injectEndpoints({
       },
     }),
 
+    getAssignmentByVideoId: builder.query({
+      query: (videoId) => `/assignments?video_id=${videoId}`,
+
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          const res = await queryFulfilled;
+          dispatch(assignmentByVideoId(res.data[0]));
+        } catch (err) {
+          console.log(err.message);
+        }
+      },
+    }),
+
     getAssignmentMarks: builder.query({
       query: () => "/assignmentMark",
     }),
+
     getAssignmentMark: builder.query({
       query: (id) => `/assignmentMark/${id}`,
     }),
+
+    getAssignmentMarkForVideoByStudent: builder.query({
+      query: ({ assignmentId, studentId }) =>
+        `/assignmentMark?assignment_id=${assignmentId}&student_id=${studentId}`,
+    }),
+
     addAssignmentMark: builder.mutation({
       query: (data) => ({
         url: "/assignmentMark",
@@ -90,6 +132,7 @@ export const assignmentApi = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+
     updateAssignmentMark: builder.mutation({
       query: ({ id, patch }) => ({
         url: `/assignmentMark/${id}`,
@@ -131,4 +174,6 @@ export const {
   useUpdateAssignmentMarkMutation,
   useUpdateAssignmentMutation,
   useDeleteAssignmentMutation,
+  useGetAssignmentByVideoIdQuery,
+  useGetAssignmentMarkForVideoByStudentQuery,
 } = assignmentApi;

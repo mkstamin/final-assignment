@@ -2,17 +2,30 @@ import moment from "moment/moment";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useGetQuizzesByVideoIdQuery } from "../../features/quize/quizApi";
+import useIsAssignmentCheck from "../../hooks/useIsAssignmentCheck";
+import useIsQuiz from "../../hooks/useIsQuizCheck";
 import AssignmentSubmission from "../assignment/AssignmentSubmission";
 
 const VideoPlayer = ({ setActiveModal, activeModal }) => {
   const [activeTab, setActiveTab] = useState("description");
   const singleVideo = useSelector((state) => state.users.video);
 
-  if (singleVideo.id === undefined) {
-    return <div>Loading........</div>;
+  const { id, url, title, createdAt, description } = singleVideo || {};
+
+  const { data: quizzes, isLoading } = useGetQuizzesByVideoIdQuery(id);
+
+  const isQuiz = useIsQuiz(id);
+  const isAssignment = useIsAssignmentCheck(id);
+
+  let isQuizzes = [];
+  if (!isLoading) {
+    isQuizzes = quizzes;
   }
 
-  const { id, url, title, createdAt, description } = singleVideo;
+  if (id === undefined) {
+    return <div>Loading........</div>;
+  }
 
   return (
     <div className="col-span-full w-full space-y-8 lg:col-span-2">
@@ -46,21 +59,35 @@ const VideoPlayer = ({ setActiveModal, activeModal }) => {
 
           <button
             // border-[cyan] text-[cyan] hover:bg-[cyan] hover:text-gray-900
-            className={`px-3 font-bold py-1 border border-red-700 text-red-700 cursor-not-allowed ${
+            className={`px-3 font-bold py-1 border ${
+              isAssignment?.id
+                ? "border-[cyan] text-[cyan] hover:bg-[cyan] hover:text-gray-900"
+                : "border-red-700 text-red-700 bg-transparent cursor-not-allowed"
+            } ${
               activeTab === "assignment" ? "bg-[cyan] text-gray-900" : " "
             } rounded-full text-sm`}
             onClick={() => setActiveTab("assignment")}
-            // disabled={true}
+            disabled={!isAssignment?.id ? true : false}
           >
-            এসাইনমেন্ট নেই
+            এসাইনমেন্ট {isAssignment?.id ? "আছে" : "নেই"}
           </button>
 
           <Link
             to={`/quiz/${id}`}
             target="_blank"
-            className="px-3 font-bold py-1 border border-[cyan] text-[cyan] rounded-full text-sm hover:bg-[cyan] hover:text-gray-900"
+            className={`px-3 font-bold py-1 border rounded-full text-sm ${
+              isQuizzes.length > 0
+                ? !isQuiz?.id
+                  ? "border-[cyan] text-[cyan] hover:bg-[cyan] hover:text-gray-900"
+                  : "border-[cyan]  bg-[cyan] text-gray-900 opacity-50"
+                : "border-red-700 text-red-700 pointer-events-none"
+            }`}
           >
-            কুইজে অংশগ্রহণ করুন
+            {isQuizzes.length > 0
+              ? !isQuiz?.id
+                ? "কুইজে অংশগ্রহণ করুন"
+                : "কুইজে অংশগ্রহণ করেছেন"
+              : "কুইজ নেই"}
           </Link>
         </div>
 
@@ -72,10 +99,15 @@ const VideoPlayer = ({ setActiveModal, activeModal }) => {
           </div>
 
           <div className={`${activeTab === "assignment" ? "block" : "hidden"}`}>
-            <AssignmentSubmission
-              activeModal={activeModal}
-              setActiveModal={setActiveModal}
-            />
+            {isAssignment?.id ? (
+              <AssignmentSubmission
+                isAssignment={isAssignment}
+                activeModal={activeModal}
+                setActiveModal={setActiveModal}
+              />
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>

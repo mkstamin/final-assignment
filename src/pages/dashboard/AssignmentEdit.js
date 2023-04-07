@@ -34,9 +34,9 @@ const AssignmentEdit = () => {
   };
 
   useEffect(() => {
-    setTitle(assignmentTitle);
-    setSelectVideo(video_title);
-    setMark(totalMark);
+    setTitle((prev) => assignmentTitle || prev);
+    setSelectVideo((prev) => video_title || prev);
+    setMark((prev) => totalMark || prev);
   }, [assignmentTitle, video_title, totalMark]);
 
   return (
@@ -92,7 +92,7 @@ const AssignmentEdit = () => {
               className="px-5 font-bold py-3 border border-[cyan] text-[cyan] rounded-full text-sm hover:bg-[cyan] hover:text-gray-900"
               type="submit"
             >
-              Add Assignment
+              Update Assignment
             </button>
           </div>
         </form>

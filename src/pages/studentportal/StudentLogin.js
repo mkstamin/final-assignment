@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import learningportal from "../../assets/image/learningportal.svg";
+import Error from "../../components/ui/Error";
 import { useLoginMutation } from "../../features/auth/authApi";
 
 const StudentLogin = () => {
@@ -91,6 +92,8 @@ const StudentLogin = () => {
               </Link>
             </div>
           </div>
+
+          {error && <Error message={error} />}
 
           <div>
             <button
