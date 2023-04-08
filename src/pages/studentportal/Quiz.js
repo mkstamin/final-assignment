@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "../../components/NavBar";
 import Error from "../../components/ui/Error";
 import {
@@ -25,6 +25,7 @@ const Quiz = () => {
 
   const [answers, setAnswers] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
+  const navigate = useNavigate();
 
   const isQuiz = useIsQuiz(id);
 
@@ -48,8 +49,8 @@ const Quiz = () => {
     };
 
     addQuizMark(quizMark);
-
     setIsChecked(true);
+    navigate("/leaderboard");
   };
 
   const onChangeHandler = (quizId, optionId) => {

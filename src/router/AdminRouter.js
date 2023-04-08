@@ -13,7 +13,7 @@ const AdminRouter = ({ children }) => {
 
   return <Navigate to="/" />;
 
-  return isLoggedIn ? children : <Navigate to="/" />;
+  // return isLoggedIn ? children : <Navigate to="/" />;
 };
 
 export default AdminRouter;

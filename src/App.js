@@ -18,7 +18,7 @@ import Player from "./pages/studentportal/Player";
 import Quiz from "./pages/studentportal/Quiz";
 import StudentLogin from "./pages/studentportal/StudentLogin";
 import StudentReg from "./pages/studentportal/StudentReg";
-import PadminR from "./router/AdminRouter";
+import AdminRouter from "./router/AdminRouter";
 import PrivateRouter from "./router/PrivateRouter";
 import PublicRouter from "./router/PublicRouter";
 
@@ -88,95 +88,95 @@ function App() {
           <Route
             path="dashboard"
             element={
-              <PadminR>
+              <AdminRouter>
                 <Dashboard />
-              </PadminR>
+              </AdminRouter>
             }
           />
 
           <Route
             path="assignment"
             element={
-              <PadminR>
+              <AdminRouter>
                 <Assignment />
-              </PadminR>
+              </AdminRouter>
             }
           />
           <Route
             path="add-assignment"
             element={
-              <PadminR>
+              <AdminRouter>
                 <AssignmentAdd />
-              </PadminR>
+              </AdminRouter>
             }
           />
           <Route
             path="edit-assignment/:id"
             element={
-              <PadminR>
+              <AdminRouter>
                 <AssignmentEdit />
-              </PadminR>
+              </AdminRouter>
             }
           />
 
           <Route
             path="assignment-mark"
             element={
-              <PadminR>
+              <AdminRouter>
                 <AssignmentMark />
-              </PadminR>
+              </AdminRouter>
             }
           />
           <Route
             path="quizzes"
             element={
-              <PadminR>
+              <AdminRouter>
                 <Quizzes />
-              </PadminR>
+              </AdminRouter>
             }
           />
 
           <Route
             path="add-quiz"
             element={
-              <PadminR>
+              <AdminRouter>
                 <QuizAdd />
-              </PadminR>
+              </AdminRouter>
             }
           />
 
           <Route
             path="edit-quiz/:id"
             element={
-              <PadminR>
+              <AdminRouter>
                 <QuizEdit />
-              </PadminR>
+              </AdminRouter>
             }
           />
 
           <Route
             path="videos"
             element={
-              <PadminR>
+              <AdminRouter>
                 <Videos />
-              </PadminR>
+              </AdminRouter>
             }
           />
           <Route
             path="add-video"
             element={
-              <PadminR>
+              <AdminRouter>
                 <VideoAdd />
-              </PadminR>
+              </AdminRouter>
             }
           />
 
           <Route
             path="edit-video/:id"
             element={
-              <PadminR>
+              <AdminRouter>
                 <VideoEdit />
-              </PadminR>
+              </AdminRouter>
             }
           />
         </Route>

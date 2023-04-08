@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NavBar from "../../components/NavBar";
 import Error from "../../components/ui/Error";
@@ -16,23 +16,41 @@ const Leaderboard = () => {
   const mergedQuizMarksMarks = useSelector(
     (state) => state.leaderboard.quizMarks
   );
+
+  const user = useSelector((state) => state.auth.user);
+
   const { data: assignmentMarks } = useGetAssignmentMarksQuery();
   const { data: quizzesMark } = useGetQuizzesMarkQuery();
   const dispatch = useDispatch();
 
-  const [error, setError] = useState("");
+  // for first gape show data
+  const showTotalData = 20;
 
-  const mergedMarks = mergedQuizMarksMarks.map((quiz) => {
-    const matchingAssignment = mergedAssignmentMarks.find(
+  const mergedMarks = mergedQuizMarksMarks?.map((quiz, i) => {
+    const matchingAssignment = mergedAssignmentMarks?.find(
       (assignment) => assignment.student_id === quiz.student_id
     );
     return {
+      id: i + 1,
       quiz: { ...quiz },
       assignment: { ...matchingAssignment },
+      totalMark:
+        (quiz?.mark ? quiz?.mark : 0) +
+        (matchingAssignment?.mark ? matchingAssignment?.mark : 0),
     };
   });
 
-  console.log(mergedMarks);
+  const studentMarksData = mergedMarks.sort(
+    (a, b) => b.totalMark - a.totalMark
+  );
+
+  const findIndiVidual = studentMarksData.find(
+    (m) => m?.quiz?.student_id === user?.id
+  );
+
+  const findRank = (mark) => {
+    return studentMarksData.findIndex((itm) => itm.totalMark === mark) + 1;
+  };
 
   useEffect(() => {
     dispatch(addAllAssignmentMarks(assignmentMarks));
@@ -42,36 +60,78 @@ const Leaderboard = () => {
     dispatch(addAllQuizMarks(quizzesMark));
   }, [dispatch, quizzesMark]);
 
+  // content
   let content = null;
-
-  if (mergedMarks.length < 1) {
+  if (studentMarksData.length < 0) {
     content = (
       <tr>
         <td>Loading....</td>
       </tr>
     );
   }
-
-  if (mergedMarks === undefined) {
+  if (studentMarksData === undefined) {
     content = <Error message={"There was an error"} />;
   }
-
-  if (mergedMarks.length > 0 && mergedMarks !== undefined) {
-    content = mergedMarks?.map((itm, i) => {
-      const { assignment, quiz } = itm;
+  if (studentMarksData.length > 0 && studentMarksData !== undefined) {
+    content = studentMarksData?.slice(0, showTotalData)?.map((itm, i) => {
+      const { assignment, quiz, totalMark } = itm;
       return (
         <tr key={i} className="border-b border-slate-600/50">
-          <td className="table-td text-center">4</td>
+          <td className="table-td text-center">{findRank(totalMark)}</td>
           <td className="table-td text-center">{quiz.student_name}</td>
-          <td className="table-td text-center">{quiz.mark}</td>
-          <td className="table-td text-center">{assignment.mark}</td>
-          <td className="table-td text-center">
-            {quiz.totalMark + assignment.mark}
-          </td>
+          <td className="table-td text-center">{quiz?.mark || 0}</td>
+          <td className="table-td text-center">{assignment?.mark || 0}</td>
+          <td className="table-td text-center">{totalMark}</td>
         </tr>
       );
     });
   }
+
+  // Individual
+  let individualContent = null;
+
+  if (!findIndiVidual?.id && !findIndiVidual === undefined) {
+    individualContent = (
+      <tr>
+        <td>Loading....</td>
+      </tr>
+    );
+  }
+
+  if (findIndiVidual === undefined) {
+    individualContent = (
+      <tr className="border-2 border-[cyan]">
+        <td className="table-td text-center font-bold">{findRank(0)}</td>
+        <td className="table-td text-center font-bold">{user?.name}</td>
+        <td className="table-td text-center font-bold">0</td>
+        <td className="table-td text-center font-bold">0</td>
+        <td className="table-td text-center font-bold">0</td>
+      </tr>
+    );
+  }
+
+  if (findIndiVidual?.id && findIndiVidual !== undefined) {
+    individualContent = (
+      <tr className="border-2 border-[cyan]">
+        <td className="table-td text-center font-bold">
+          {findRank(findIndiVidual?.totalMark)}
+        </td>
+        <td className="table-td text-center font-bold">
+          {findIndiVidual?.quiz?.student_name}
+        </td>
+        <td className="table-td text-center font-bold">
+          {findIndiVidual?.quiz?.mark || 0}
+        </td>
+        <td className="table-td text-center font-bold">
+          {findIndiVidual?.assignment?.mark || 0}
+        </td>
+        <td className="table-td text-center font-bold">
+          {findIndiVidual?.totalMark}
+        </td>
+      </tr>
+    );
+  }
+
   return (
     <>
       <NavBar />
@@ -91,15 +151,7 @@ const Leaderboard = () => {
                 </tr>
               </thead>
 
-              <tbody>
-                <tr className="border-2 border-[cyan]">
-                  <td className="table-td text-center font-bold">4</td>
-                  <td className="table-td text-center font-bold">Saad Hasan</td>
-                  <td className="table-td text-center font-bold">50</td>
-                  <td className="table-td text-center font-bold">50</td>
-                  <td className="table-td text-center font-bold">100</td>
-                </tr>
-              </tbody>
+              <tbody>{individualContent}</tbody>
             </table>
           </div>
 

@@ -57,8 +57,20 @@ const VideoPlayer = ({ setActiveModal, activeModal }) => {
             ভিডিও ডেসক্রিপশন
           </button>
 
-          <button
-            // border-[cyan] text-[cyan] hover:bg-[cyan] hover:text-gray-900
+          {isAssignment?.id ? (
+            <button
+              className={`px-3 font-bold py-1 border border-[cyan] text-[cyan] hover:bg-[cyan] hover:text-gray-900 ${
+                activeTab === "assignment" ? "bg-[cyan] text-gray-900" : " "
+              } rounded-full text-sm`}
+              onClick={() => setActiveTab("assignment")}
+            >
+              এসাইনমেন্ট আছে
+            </button>
+          ) : (
+            ""
+          )}
+
+          {/* <button
             className={`px-3 font-bold py-1 border ${
               isAssignment?.id
                 ? "border-[cyan] text-[cyan] hover:bg-[cyan] hover:text-gray-900"
@@ -70,11 +82,11 @@ const VideoPlayer = ({ setActiveModal, activeModal }) => {
             disabled={!isAssignment?.id ? true : false}
           >
             এসাইনমেন্ট {isAssignment?.id ? "আছে" : "নেই"}
-          </button>
+          </button> */}
 
           <Link
             to={`/quiz/${id}`}
-            target="_blank"
+            // target="_blank"
             className={`px-3 font-bold py-1 border rounded-full text-sm ${
               isQuizzes.length > 0
                 ? !isQuiz?.id

@@ -20,7 +20,6 @@ const leaderboardSlice = createSlice({
         filterByStatus?.reduce((acc, curr) => {
           if (!acc[curr.student_id]) {
             acc[curr.student_id] = {
-              id: curr.id,
               student_id: curr.student_id,
               student_name: curr.student_name,
               assignment_id: curr.student_id,
@@ -43,7 +42,6 @@ const leaderboardSlice = createSlice({
         quizMarks.reduce((acc, curr) => {
           if (!acc[curr.student_id]) {
             acc[curr.student_id] = {
-              id: curr.id,
               student_id: curr.student_id,
               student_name: curr.student_name,
               totalQuiz: curr.totalQuiz * 1,

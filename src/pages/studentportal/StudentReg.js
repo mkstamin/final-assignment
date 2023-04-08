@@ -29,6 +29,9 @@ const StudentReg = () => {
         role: "student",
       });
     }
+    if (data === undefined) {
+      setError("Try with another email");
+    }
   };
 
   return (

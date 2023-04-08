@@ -18,8 +18,6 @@ const PublicRouter = ({ children }) => {
   ) : (
     <Navigate to="/admin/dashboard" />
   );
-
-  return !isLoggedIn ? children : <Navigate to="/player" />;
 };
 
 export default PublicRouter;

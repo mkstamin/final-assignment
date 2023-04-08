@@ -118,6 +118,24 @@ export const quizApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data: addData } = await queryFulfilled;
+
+          dispatch(
+            quizApi.util.updateQueryData(
+              "getQuizzesMark",
+              undefined,
+              (draft) => {
+                draft.push(addData);
+              }
+            )
+          );
+        } catch (err) {
+          console.log(err.message);
+        }
+      },
     }),
   }),
 });
